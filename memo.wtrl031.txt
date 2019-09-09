@@ -1,0 +1,16 @@
+====================================
+PINS для LQFP32 l031
+
+AIN0 	- PA0 	- аналоговый,   Контроль сухости
+AIN1 	- PA1 	- аналоговый,   Контроль перелива
+GPIO 	- PB4 	- dig/out       Управление доменом питания
+GPIO 	- PB5 	- dig/out       Управление помпой 
+LED_APP - PB3  	- dig/out   	Application Led 
+I2C1 	- PA9 	- I2C1_SCL     	LCD/HD44 Display
+I2C1 	- PA10 	- I2C1_SDA     	LCD/HD44 Display
+USART	- PA2 	- USART1_TX  	Debug COM
+USART	- PA15	- USART1_RX    	Debug COM
+ENC1 	- PA8	- DT Enc        Направление передачи GPIO_Ext
+ENC2 	- PA11 	- CLK Enc       Тактирование GPIO_Ext
+ENCB	- PA12 	- Btn Enc       Кнопка жмется GPIO_Ext
+GPIO    - PB7   - dig/out       LCD Power management
