@@ -43,6 +43,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include <stdint.h>
 
+#include "cfgs.h"
+
 #include "apptypes.h"
 
 #include "events.h"
@@ -184,17 +186,19 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
 
-#if 1  
   if(( applContext.startConditions == ByReset )
     ||( getSettings()->blDisplayOnMode ))
   {
-    // TODO Up power domain and LCD Power here
-    setLCDControl( 0x00 ); // On  - Inverse
+    // Up power domain and LCD Power here
+    setPwrControl( 0x01 ); // Pwr2 domain On 
+    setLCDControl( 0x01 ); // On 
   }
   else
-    setLCDControl( 0x01 ); // Off - Inverse
-#endif
-
+  {
+    setPwrControl( 0x00 ); // Pwr2 domain Off 
+    setLCDControl( 0x00 ); // Off
+  }
+  
   HAL_Delay( 1000 ); 
   
   if(( applContext.startConditions == ByReset )
@@ -1011,41 +1015,54 @@ void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
 
 void setLCDControl(uint8_t OnOff)
 {
+#ifdef INVERSE_PWR_LCD_CONTROL
+  if( OnOff == 0 )
+    HAL_GPIO_WritePin(GPIO_LCD_CONTROL_GPIO_Port, GPIO_LCD_CONTROL_Pin, GPIO_PIN_SET);
+  
+  if( OnOff== 1 )
+     HAL_GPIO_WritePin(GPIO_LCD_CONTROL_GPIO_Port, GPIO_LCD_CONTROL_Pin, GPIO_PIN_RESET);	
+  
+#else
   if( OnOff == 1 )
     HAL_GPIO_WritePin(GPIO_LCD_CONTROL_GPIO_Port, GPIO_LCD_CONTROL_Pin, GPIO_PIN_SET);
   
   if( OnOff== 0 )
      HAL_GPIO_WritePin(GPIO_LCD_CONTROL_GPIO_Port, GPIO_LCD_CONTROL_Pin, GPIO_PIN_RESET);	
+#endif
 }
 
 void setPumpControl(uint8_t OnOff)
 {
-#if 0 
-  if( OnOff == 1 )
-    HAL_GPIO_WritePin(GPIO_PUMP_CONTROL_GPIO_Port, GPIO_PUMP_CONTROL_Pin, GPIO_PIN_SET);
-  
-  if( OnOff== 0 )
-     HAL_GPIO_WritePin(GPIO_PUMP_CONTROL_GPIO_Port, GPIO_PUMP_CONTROL_Pin, GPIO_PIN_RESET);	
-#endif
- 
-// Inverse control - because relay  
-#if 1 
+#ifdef INVERSE_PWR_PUMP_CONTROL
   if( OnOff == 0 )
     HAL_GPIO_WritePin(GPIO_PUMP_CONTROL_GPIO_Port, GPIO_PUMP_CONTROL_Pin, GPIO_PIN_SET);
   
   if( OnOff== 1)
      HAL_GPIO_WritePin(GPIO_PUMP_CONTROL_GPIO_Port, GPIO_PUMP_CONTROL_Pin, GPIO_PIN_RESET);	
-#endif
+#else
+  if( OnOff == 1 )
+    HAL_GPIO_WritePin(GPIO_PUMP_CONTROL_GPIO_Port, GPIO_PUMP_CONTROL_Pin, GPIO_PIN_SET);
   
+  if( OnOff== 0 )
+     HAL_GPIO_WritePin(GPIO_PUMP_CONTROL_GPIO_Port, GPIO_PUMP_CONTROL_Pin, GPIO_PIN_RESET);	
+#endif
 }
 
 void setPwrControl( uint8_t OnOff )
 {
+#ifdef INVERSE_PWRD2_CONTRON  
+  if( OnOff == 0 )
+    HAL_GPIO_WritePin(GPIO_PWR_CONTROL_GPIO_Port, GPIO_PWR_CONTROL_Pin, GPIO_PIN_SET);
+  
+  if( OnOff== 1 )
+     HAL_GPIO_WritePin(GPIO_PWR_CONTROL_GPIO_Port, GPIO_PWR_CONTROL_Pin, GPIO_PIN_RESET);	
+#else
   if( OnOff == 1 )
     HAL_GPIO_WritePin(GPIO_PWR_CONTROL_GPIO_Port, GPIO_PWR_CONTROL_Pin, GPIO_PIN_SET);
   
   if( OnOff== 0 )
      HAL_GPIO_WritePin(GPIO_PWR_CONTROL_GPIO_Port, GPIO_PWR_CONTROL_Pin, GPIO_PIN_RESET);	
+#endif  
 }
 
 void setLedPinState( uint8_t ledId, uint8_t state )
