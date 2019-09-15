@@ -721,7 +721,3 @@ uint8_t fwkSleepSecTicksEvHandler(_tEQ* p)
   return 0x01;
 }
 
-//void fwkSleepActivityUpdate( uint16_t seconds )
-//{
-//  uiActivationSleepAppTO = seconds;
-//}

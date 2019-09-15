@@ -941,7 +941,8 @@ void mnTestInputEvents( void )
     }
   }
   
-  for( uint32_t i=0; i<(tmp/8 +1); i++ )
+  // for( uint32_t i=0; i<(tmp/8 +1); i++ )
+  for( uint32_t i=0; i<(tmp/6 +1); i++ )
   {
      eqAddEvent( pEvt );
   }
@@ -966,13 +967,35 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
-  /*Configure GPIO pin Output Level */
+  /* Configure GPIO pin Output Level */
+  uint16_t uiResetPins  = 0;
+  uint16_t uiSetPins    = 0;
+  
+#ifdef INVERSE_PWRD2_CONTRON
+  uiSetPins   |= GPIO_PWR_CONTROL_Pin;
+#else
+  uiResetPins |= GPIO_PWR_CONTROL_Pin;
+#endif  
+
+#ifdef INVERSE_PWR_LCD_CONTROL  
+  uiSetPins   |= GPIO_LCD_CONTROL_Pin;
+#else
+  uiResetPins |= GPIO_LCD_CONTROL_Pin;
+#endif  
+  
+#ifdef INVERSE_PWR_PUMP_CONTROL
+  uiSetPins   |= GPIO_PUMP_CONTROL_Pin;
+#else
+  uiResetPins |= GPIO_PUMP_CONTROL_Pin;
+#endif
+  
+  uiResetPins |= LD3_Pin;
+
   // Set because Relay
-  HAL_GPIO_WritePin(GPIOB, GPIO_PUMP_CONTROL_Pin
-                          |GPIO_LCD_CONTROL_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOB, uiSetPins, GPIO_PIN_SET);
+  
   // Reset normal case
-  HAL_GPIO_WritePin(GPIOB, LD3_Pin
-                          |GPIO_PWR_CONTROL_Pin, GPIO_PIN_RESET); 
+  HAL_GPIO_WritePin(GPIOB, uiResetPins, GPIO_PIN_RESET); 
 
   /*Configure GPIO pin : PA12 */
   GPIO_InitStruct.Pin     = GPIO_PIN_12;
@@ -1051,8 +1074,8 @@ void setPumpControl(uint8_t OnOff)
 void setPwrControl( uint8_t OnOff )
 {
 #ifdef INVERSE_PWRD2_CONTRON  
-  if( OnOff == 0 )
-    HAL_GPIO_WritePin(GPIO_PWR_CONTROL_GPIO_Port, GPIO_PWR_CONTROL_Pin, GPIO_PIN_SET);
+//  if( OnOff == 0 )
+//    HAL_GPIO_WritePin(GPIO_PWR_CONTROL_GPIO_Port, GPIO_PWR_CONTROL_Pin, GPIO_PIN_SET);
   
   if( OnOff== 1 )
      HAL_GPIO_WritePin(GPIO_PWR_CONTROL_GPIO_Port, GPIO_PWR_CONTROL_Pin, GPIO_PIN_RESET);	
@@ -1060,8 +1083,8 @@ void setPwrControl( uint8_t OnOff )
   if( OnOff == 1 )
     HAL_GPIO_WritePin(GPIO_PWR_CONTROL_GPIO_Port, GPIO_PWR_CONTROL_Pin, GPIO_PIN_SET);
   
-  if( OnOff== 0 )
-     HAL_GPIO_WritePin(GPIO_PWR_CONTROL_GPIO_Port, GPIO_PWR_CONTROL_Pin, GPIO_PIN_RESET);	
+//  if( OnOff== 0 )
+//     HAL_GPIO_WritePin(GPIO_PWR_CONTROL_GPIO_Port, GPIO_PWR_CONTROL_Pin, GPIO_PIN_RESET);	
 #endif  
 }
 

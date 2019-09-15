@@ -71,72 +71,79 @@ extern void menuBeforeChangeDate( void );
 extern void menuPrintYear( uint8_t row, char* pSBuff);
 extern void menuPrintMonth(uint8_t row, char* pB );
 extern void menuPrintDay(uint8_t row, char* pB );
-extern void menuPrintSet( uint8_t row, char* pB );
+extern void menuPrintSetDate( uint8_t row, char* pB );
 
+extern void menuBeforeChangeTime( void );
+extern void menuPrintSetTime( uint8_t row, char* pB );
+extern void menuPrintHours( uint8_t row, char* pB );
+extern void menuPrintMinutes( uint8_t row, char* pB );
+extern void menuPrintSeconds( uint8_t row, char* pB );
+
+void menuPrintSetTime( uint8_t row, char* pB );
 
 tMenu Menu[]={
-// Next       Prev        Parent   Child                                    R   Before Leaf Selected  Custom Prnt  M   M        Type              String
-  {&Menu[1],  NULL,         NULL,     NULL,                                 0,                 NULL,         NULL, 0,  0, SelectLeaf,       "<-(Watch)"},  // 0
-  {&Menu[2],  &Menu[0],     NULL,     NULL,                  &(settings.mode),                 NULL,         NULL, 0,  1,EnterUI8Val,            "Mode"},  // 1 Main Menu
-  {&Menu[3],  &Menu[1],     NULL, &Menu[6],                                 0,                 NULL,         NULL, 0,  0, SelectLeaf,      "Management"},  // 2
-  {&Menu[4],  &Menu[2],     NULL, &Menu[2],                                 0,                 NULL,         NULL, 0,  0, SelectLeaf,     "Time change"},  // 3
-  {&Menu[5],  &Menu[3],     NULL,&Menu[22],                                 0,                 NULL,         NULL, 0,  0, SelectLeaf,     "Date change"},  // 4 - SetDate
-  {NULL,      &Menu[4],     NULL, &Menu[2],                                 0,                 NULL,         NULL, 0,  0, SelectLeaf,        "Watering"},  // 5
+// Next       Prev        Parent   Child                                    R   Before Leaf Selected      Custom Prnt  M   M        Type              String
+  {&Menu[1],  NULL,         NULL,     NULL,                                 0,                 NULL,            NULL, 0,  0, SelectLeaf,       "<-(Watch)"},  // 0
+  {&Menu[2],  &Menu[0],     NULL,     NULL,                  &(settings.mode),                 NULL,            NULL, 0,  1,EnterUI8Val,            "Mode"},  // 1 Main Menu
+  {&Menu[3],  &Menu[1],     NULL, &Menu[6],                                 0,                 NULL,            NULL, 0,  0, SelectLeaf,      "Management"},  // 2
+  {&Menu[4],  &Menu[2],     NULL,&Menu[29],                                 0,                 NULL,            NULL, 0,  0, SelectLeaf,     "Time change"},  // 3
+  {&Menu[5],  &Menu[3],     NULL,&Menu[22],                                 0,                 NULL,            NULL, 0,  0, SelectLeaf,     "Date change"},  // 4 - SetDate
+  {NULL,      &Menu[4],     NULL, &Menu[2],                                 0,                 NULL,            NULL, 0,  0, SelectLeaf,        "Watering"},  // 5
 
   // Management State
-  {&Menu[7],  NULL,         NULL, &Menu[0],                                 0,                 NULL,         NULL, 0,  0, SelectLeaf,          "<-Back"},  // 6
-  {&Menu[8],  &Menu[6],     NULL,     NULL,             &(settings.blUsePump),                 NULL,         NULL, 0,  1,EnterUI8Val,        "Use Pump"},  // 7
-  {&Menu[9],  &Menu[7],     NULL,     NULL,        &(settings.secondsToSleep),                 NULL,         NULL, 2,255,EnterUI8Val,       "Sec2Sleep"},  // 8
-  {&Menu[10], &Menu[8],     NULL,     NULL,       &(settings.secondsWatering),                 NULL,         NULL, 0,255,EnterUI8Val,       "sWatering"},  // 9
-  {&Menu[11], &Menu[9],     NULL,     NULL,       &(settings.blDisplayOnMode),                 NULL,         NULL, 0,  1,EnterUI8Val,         "On Disp"},  // 10
-  {&Menu[12],&Menu[10],     NULL,&Menu[36],                                 0,                 NULL,         NULL, 0,  0, SelectLeaf,             "AOS"},  // 11
-  {&Menu[13],&Menu[11],     NULL,     NULL,                                 0,                 NULL,         NULL, 0,  0, SelectLeaf,             "AOT"},  // 12
-  {&Menu[14],&Menu[12],     NULL,&Menu[18],                                 0,                 NULL,         NULL, 0,  0, SelectLeaf,         "Default"},  // 13
-  {     NULL,&Menu[13],     NULL,&Menu[20],                                 0,                 NULL,         NULL, 0,  0, SelectLeaf,        "Save set"},  // 14
+  {&Menu[7],  NULL,         NULL, &Menu[0],                                 0,                 NULL,            NULL, 0,  0, SelectLeaf,          "<-Back"},  // 6
+  {&Menu[8],  &Menu[6],     NULL,     NULL,             &(settings.blUsePump),                 NULL,            NULL, 0,  1,EnterUI8Val,        "Use Pump"},  // 7
+  {&Menu[9],  &Menu[7],     NULL,     NULL,        &(settings.secondsToSleep),                 NULL,            NULL, 2,255,EnterUI8Val,       "Sec2Sleep"},  // 8
+  {&Menu[10], &Menu[8],     NULL,     NULL,       &(settings.secondsWatering),                 NULL,            NULL, 0,255,EnterUI8Val,       "sWatering"},  // 9
+  {&Menu[11], &Menu[9],     NULL,     NULL,       &(settings.blDisplayOnMode),                 NULL,            NULL, 0,  1,EnterUI8Val,         "On Disp"},  // 10
+  {&Menu[12],&Menu[10],     NULL,&Menu[36],                                 0,                 NULL,            NULL, 0,  0, SelectLeaf,             "AOS"},  // 11
+  {&Menu[13],&Menu[11],     NULL,     NULL,                                 0,                 NULL,            NULL, 0,  0, SelectLeaf,             "AOT"},  // 12
+  {&Menu[14],&Menu[12],     NULL,&Menu[18],                                 0,                 NULL,            NULL, 0,  0, SelectLeaf,         "Default"},  // 13
+  {     NULL,&Menu[13],     NULL,&Menu[20],                                 0,                 NULL,            NULL, 0,  0, SelectLeaf,        "Save set"},  // 14
 
   // New lines are added - index correction is needed
-  {     NULL,     NULL,     NULL,     NULL,                                 0,                 NULL,         NULL, 0,  0, SelectLeaf,                ""},  // 15 New
-  {     NULL,     NULL,     NULL,     NULL,                                 0,                 NULL,         NULL, 0,  0, SelectLeaf,                ""},  // 16 New
-  {     NULL,     NULL,     NULL,     NULL,                                 0,                 NULL,         NULL, 0,  0, SelectLeaf,                ""},  // 17 New
+  {     NULL,     NULL,     NULL,     NULL,                                 0,                 NULL,            NULL, 0,  0, SelectLeaf,                ""},  // 15 New
+  {     NULL,     NULL,     NULL,     NULL,                                 0,                 NULL,            NULL, 0,  0, SelectLeaf,                ""},  // 16 New
+  {     NULL,     NULL,     NULL,     NULL,                                 0,                 NULL,            NULL, 0,  0, SelectLeaf,                ""},  // 17 New
 
   // Indexes are not valid from here
   // "Default" State
-  {&Menu[19],     NULL,     NULL,&Menu[13],                              NULL,                 NULL,         NULL, 0,  0, SelectLeaf,            "NO "},  // 18
-  {     NULL,&Menu[18],     NULL,&Menu[13],           assing_default_settings,                 NULL,         NULL, 0,  0,   MakeFunc,            "YES"},  // 19
+  {&Menu[19],     NULL,     NULL,&Menu[13],                              NULL,                 NULL,            NULL, 0,  0, SelectLeaf,            "NO "},  // 18
+  {     NULL,&Menu[18],&Menu[13],     NULL,           assing_default_settings,                 NULL,            NULL, 0,  0,   MakeFunc,            "YES"},  // 19
 
   // "Save Set" State
-  {&Menu[21],     NULL,     NULL,&Menu[14],                              NULL,                 NULL,         NULL, 0,  0, SelectLeaf,            "NO "},  // 20
-  {     NULL,&Menu[20],&Menu[14],     NULL,            makeSaveSetLeafHandler,                 NULL,         NULL, 0,  0,   MakeFunc,            "YES"},  // 21
+  {&Menu[21],     NULL,     NULL,&Menu[14],                              NULL,                 NULL,            NULL, 0,  0, SelectLeaf,            "NO "},  // 20
+  {     NULL,&Menu[20],&Menu[14],     NULL,            makeSaveSetLeafHandler,                 NULL,            NULL, 0,  0,   MakeFunc,            "YES"},  // 21
 
   // "Date change" State
-  {&Menu[23],     NULL,     NULL, &Menu[4],                                 0, menuBeforeChangeDate,          NULL, 0,  0, SelectLeaf,         "<-Back"},  // 22
-  {&Menu[24],&Menu[22],     NULL,     NULL,                         &menuYear,                 NULL, menuPrintYear, 18,25,EnterUI8Val,          "Year:"},  // 23
-  {&Menu[25],&Menu[23],     NULL,     NULL,                        &menuMonth,                 NULL,menuPrintMonth, 1, 12,EnterUI8Val,          "Mnth:"},  // 24
-  {&Menu[26],&Menu[24],     NULL,     NULL,                          &menuDay,                 NULL,  menuPrintDay, 1, 31,EnterUI8Val,           "Day:"},  // 25
-  {     NULL,&Menu[25],     NULL,&Menu[27],                                 0,                 NULL,  menuPrintSet, 0,  0, SelectLeaf,            "Set"},  // 26
+  {&Menu[23],     NULL,     NULL, &Menu[4],                                 0, menuBeforeChangeDate,            NULL, 0,  0, SelectLeaf,         "<-Back"},  // 22
+  {&Menu[24],&Menu[22],     NULL,     NULL,                         &menuYear,                 NULL,   menuPrintYear, 18,25,EnterUI8Val,          "Year:"},  // 23
+  {&Menu[25],&Menu[23],     NULL,     NULL,                        &menuMonth,                 NULL,  menuPrintMonth, 1, 12,EnterUI8Val,          "Mnth:"},  // 24
+  {&Menu[26],&Menu[24],     NULL,     NULL,                          &menuDay,                 NULL,    menuPrintDay, 1, 31,EnterUI8Val,           "Day:"},  // 25
+  {     NULL,&Menu[25],     NULL,&Menu[27],                                 0,                 NULL,menuPrintSetDate, 0,  0, SelectLeaf,            "Set"},  // 26
 
   // "Date change" State - Set
-  {&Menu[28],     NULL,     NULL,&Menu[26],                              NULL,                 NULL,          NULL, 0,  0, SelectLeaf,            "NO "},  // 27
-  {     NULL,&Menu[27],&Menu[26],     NULL,                       menuSetDate,                 NULL,          NULL, 0,  0,   MakeFunc,            "YES"},  // 28
+  {&Menu[28],     NULL,     NULL,&Menu[26],                              NULL,                 NULL,            NULL, 0,  0, SelectLeaf,            "NO "},  // 27
+  {     NULL,&Menu[27],&Menu[26],     NULL,                       menuSetDate,                 NULL,            NULL, 0,  0,   MakeFunc,            "YES"},  // 28
 
   // "Time change" State
-  {&Menu[30],     NULL, &Menu[3],     NULL,                                 0, menuBeforeChangeDate,          NULL, 0,  0, SelectLeaf,          "<-Back"}, // 29
-  {&Menu[31],&Menu[29],     NULL,     NULL,            &(timeForUpdate.hours),                 NULL,          NULL, 0, 23,EnterUI8Val,           "Hour:"}, // 30
-  {&Menu[32],&Menu[30],     NULL,     NULL,          &(timeForUpdate.minutes),                 NULL,          NULL, 0, 59,EnterUI8Val,            "Min:"}, // 31
-  {&Menu[33],&Menu[31],     NULL,     NULL,          &(timeForUpdate.seconds),                 NULL,          NULL, 0, 59,EnterUI8Val,            "Sec:"}, // 32
-  {&Menu[34],&Menu[32],     NULL,     NULL,                                 0,                 NULL,          NULL, 0,  0, SelectLeaf,             "Set"}, // 33
+  {&Menu[30],     NULL,     NULL, &Menu[3],                                 0, menuBeforeChangeTime,            NULL, 0,  0, SelectLeaf,          "<-Back"}, // 29
+  {&Menu[31],&Menu[29],     NULL,     NULL,            &(timeForUpdate.hours),                 NULL,  menuPrintHours, 0, 23,EnterUI8Val,           "Hour:"}, // 30
+  {&Menu[32],&Menu[30],     NULL,     NULL,          &(timeForUpdate.minutes),                 NULL,menuPrintMinutes, 0, 59,EnterUI8Val,            "Min:"}, // 31
+  {&Menu[33],&Menu[31],     NULL,     NULL,          &(timeForUpdate.seconds),                 NULL,menuPrintSeconds, 0, 59,EnterUI8Val,            "Sec:"}, // 32
+  {     NULL,&Menu[32],     NULL,&Menu[34],                                 0,                 NULL,menuPrintSetTime, 0,  0, SelectLeaf,             "Set"}, // 33
 
   // "Time change" State - Set
-  {&Menu[35],     NULL,     NULL,&Menu[33],                              NULL,                 NULL,          NULL, 0,  0, SelectLeaf,            "NO "},  // 34
-  {     NULL,&Menu[34],&Menu[33],     NULL,                       menuSetTime,                 NULL,          NULL, 0,  0,   MakeFunc,            "YES"},  // 35
+  {&Menu[35],     NULL,     NULL,&Menu[33],                              NULL,                 NULL,            NULL, 0,  0, SelectLeaf,            "NO "},  // 34
+  {     NULL,&Menu[34],&Menu[33],     NULL,                       menuSetTime,                 NULL,            NULL, 0,  0,   MakeFunc,            "YES"},  // 35
 
   // AOS
-  {&Menu[37],     NULL,     NULL,&Menu[11],                                 0,                 NULL,         NULL, 0,  0, SelectLeaf,          "<-Back"},  // 36
-  {&Menu[38],&Menu[36],     NULL,     NULL,&(settings.uiStartSensorThreshold),                 NULL,         NULL, 0,  9,EnterUI8Val,        "StartVal"},  // 37
-  {     NULL,&Menu[37],     NULL,     NULL, &(settings.uiStopSensorThreshold),                 NULL,         NULL, 0,  9,EnterUI8Val,         "StopVal"},  // 38
-  {     NULL,     NULL,     NULL,     NULL,                                 0,                 NULL,         NULL, 0,  0, SelectLeaf,                ""},  // 39
-  {     NULL,     NULL,     NULL,     NULL,                                 0,                 NULL,         NULL, 0,  0, SelectLeaf,                ""},  // 40
-  {     NULL,     NULL,     NULL,     NULL,                                 0,                 NULL,         NULL, 0,  0, SelectLeaf,                ""},  // 41
+  {&Menu[37],     NULL,     NULL,&Menu[11],                                 0,                 NULL,            NULL, 0,  0, SelectLeaf,          "<-Back"},  // 36
+  {&Menu[38],&Menu[36],     NULL,     NULL,&(settings.uiStartSensorThreshold),                 NULL,            NULL, 0,  9,EnterUI8Val,        "StartVal"},  // 37
+  {     NULL,&Menu[37],     NULL,     NULL, &(settings.uiStopSensorThreshold),                 NULL,            NULL, 0,  9,EnterUI8Val,         "StopVal"},  // 38
+  {     NULL,     NULL,     NULL,     NULL,                                 0,                 NULL,            NULL, 0,  0, SelectLeaf,                ""},  // 39
+  {     NULL,     NULL,     NULL,     NULL,                                 0,                 NULL,            NULL, 0,  0, SelectLeaf,                ""},  // 40
+  {     NULL,     NULL,     NULL,     NULL,                                 0,                 NULL,            NULL, 0,  0, SelectLeaf,                ""},  // 41
 
   // AOT
 
@@ -149,7 +156,6 @@ tMenu* curr = NULL;
 // Menu Handlers
 void makeSaveSetLeafHandler( void )
 {
-  // settings_flush();
   flushSettings();
 }
 
@@ -187,9 +193,34 @@ void menuPrintDay(uint8_t row, char* pB )
   sprintf(  pB, "Day: %d", menuDay );
 }
 
-void menuPrintSet( uint8_t row, char* pB )
+void menuPrintSetDate( uint8_t row, char* pB )
 {
   sprintf( pB, "Set %d:%d:%d", menuYear, menuMonth, menuDay );
+}
+
+void menuBeforeChangeTime( void )
+{
+  fwkGetTime( &timeForUpdate );
+}
+
+void menuPrintHours( uint8_t row, char* pB )
+{
+    sprintf(  pB, "Hour: %d", timeForUpdate.hours );
+}
+
+void menuPrintMinutes( uint8_t row, char* pB )
+{
+    sprintf(  pB, "Min: %d", timeForUpdate.minutes );
+}
+
+void menuPrintSeconds( uint8_t row, char* pB )
+{
+    sprintf(  pB, "Sec: %d", timeForUpdate.seconds );
+}
+
+void menuPrintSetTime( uint8_t row, char* pB )
+{
+  sprintf( pB, "Set %d:%d:%d", timeForUpdate.hours, timeForUpdate.minutes, timeForUpdate.seconds );
 }
 
 void printMenuEx( void )
