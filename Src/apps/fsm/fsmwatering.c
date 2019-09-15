@@ -75,11 +75,6 @@ void menuWateringChangeStateBefore(tFsmMenuState newState)
 
     /* Print Start as menu */
     dispClear();
-//    printMenu(menuWateringStart, (sizeof(menuWateringStart) / sizeof(const char* const)), 0);
-
-    /* Print watering time */
-    // printUint16ToDspl(1, DSPL_WTG_SECS_COL, uiWtSecs);
-
     dispRedraw();
 }
 
@@ -93,8 +88,6 @@ void menuWateringChangeStateAfter(tFsmMenuState newState)
 
 uint8_t menuWateringEventHandler(_tEQ* p)
 {
-//  uint8_t uiTmp;
-
   DBGT( LOG_DEBUG, "FSM:Watering:EH-%d:%d", p->eId, p->reserved );
   
     switch (p->eId)
@@ -136,12 +129,6 @@ uint8_t menuWateringEventHandler(_tEQ* p)
 
             uiWtSecs = 0;
 
-            /* Print Stop/StopS menu */
-            // printMenu(menuWateringStop, (sizeof(menuWateringStop) / sizeof(const char* const)), 0);
-
-            /* Print Watering Time */
-            // printUint16ToDspl(1, DSPL_WTG_SECS_COL, uiWtSecs);
-
             dispRedraw();
 
             /* Turm On Pumpp */
@@ -174,24 +161,15 @@ uint8_t menuWateringEventHandler(_tEQ* p)
         if(wState == Stop)
         {
             wState = StopS;
-//            uiTmp = 1;
         }
         else if (wState == StopS)
         {
             wState = Stop;
-//            uiTmp = 0;
         }
 
         if ((wState == Stop) || (wState == StopS))
         {
             dispClear();
-
-            /* Print Stop/StopS menu */
-            //printMenu(menuWateringStop, (sizeof(menuWateringStop) / sizeof(const char* const)), uiTmp);
-
-            /* Print Watering Time */
-            // printUint16ToDspl(1, DSPL_WTG_SECS_COL, uiWtSecs);
-
             dispRedraw();
         }
         break;
