@@ -21,6 +21,7 @@
  * ------------------------------------------------------------------------------------------------
  */
 #include <stdint.h>
+#include <string.h>
 #include <stdbool.h>
 
 #include "apptypes.h"
@@ -55,7 +56,6 @@
 /*! \var tFsmMenuIfs *pMenuApplState 
     \brief Keeps actual menu FSM state 
  */
-// tFsmMenuIfs *pMenuApplState = &menuStartState;
 tFsmMenuIfs *pMenuApplState = &menuWatchState;
 
 /* ------------------------------------------------------------------------------------------------
@@ -64,9 +64,9 @@ tFsmMenuIfs *pMenuApplState = &menuWatchState;
  */
 
 /* ------------------------------------------------------------------------------------------------
-*                                          Functions
-* ------------------------------------------------------------------------------------------------
-*/
+ *                                          Functions
+ * ------------------------------------------------------------------------------------------------
+ */
 
 uint32_t uiSecondsToDisactivateMenu = INACTIVITY_TIME_DETECTION;
 uint8_t  blMenuActive     = 1;
@@ -172,11 +172,64 @@ void appPumpOnOff(uint8_t PumpState)
 
 void applMenuChangeStateEx( tFsmMenuIfs * newState )
 {
-     if(pMenuApplState->pfnMenuChangeStateAfter)
-         pMenuApplState->pfnMenuChangeStateAfter( none );
+  if( pMenuApplState == newState )
+    return;
 
-     pMenuApplState  = newState;
+  if(pMenuApplState->pfnMenuChangeStateAfter)
+    pMenuApplState->pfnMenuChangeStateAfter( none );
 
-     if(pMenuApplState->pfnMenuChangeStateBefore)
-         pMenuApplState->pfnMenuChangeStateBefore( none );
+  pMenuApplState  = newState;
+
+  if(pMenuApplState->pfnMenuChangeStateBefore)
+    pMenuApplState->pfnMenuChangeStateBefore( none );
 }
+
+/*
+ * Application State Display Area interface
+ */
+tAppStateDisplayAreaBuf appStateDislayArea;
+
+void initAppStateDisplayArea( void )
+{
+  appStateDislayArea.rdPtr = appStateDislayArea.wrPtr = 0;
+
+  for( uint8_t i=0; i<APP_STATE_AREA_DISPLAY_STR_NUM; i++ )
+  {
+    appStateDislayArea.strings[ i ].appMsg[ 0 ]     = 0x00;
+    appStateDislayArea.strings[ i ].uiTimeToDisplay = 0x00;
+  }
+}
+
+
+void addAppStateDisplayArea( char* pMsgStr, uint8_t timeToDisplay )
+{
+  if( appStateDislayArea.wrPtr >= APP_STATE_AREA_DISPLAY_STR_NUM )
+    appStateDislayArea.wrPtr = 0;
+
+  char* pDst = appStateDislayArea.strings[ appStateDislayArea.wrPtr].appMsg;
+
+  strcpy( pDst, pMsgStr );
+  appStateDislayArea.strings[ appStateDislayArea.wrPtr].uiTimeToDisplay = timeToDisplay;
+
+  appStateDislayArea.wrPtr++;
+
+  if( appStateDislayArea.wrPtr == appStateDislayArea.rdPtr )
+  {
+      appStateDislayArea.rdPtr++;
+      if( appStateDislayArea.rdPtr >= APP_STATE_AREA_DISPLAY_STR_NUM )
+        appStateDislayArea.rdPtr = 0;
+  }
+}
+
+void getAppStateDisplayArea( char* pReadBuf, uint8_t* pTomeToDisplay )
+{
+  strcpy( pReadBuf, appStateDislayArea.strings[appStateDislayArea.rdPtr].appMsg );
+  *pTomeToDisplay = appStateDislayArea.strings[appStateDislayArea.rdPtr].uiTimeToDisplay;
+
+  if( appStateDislayArea.wrPtr != appStateDislayArea.rdPtr )
+    appStateDislayArea.rdPtr++;
+
+  if( appStateDislayArea.rdPtr >= APP_STATE_AREA_DISPLAY_STR_NUM )
+          appStateDislayArea.rdPtr = 0;
+}
+

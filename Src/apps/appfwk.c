@@ -569,9 +569,11 @@ void dispSetChar(uint8_t row, uint8_t column, char ch)
     char chTmp = dsplDataScreen[row][column].pEntityVal;
     if( chTmp != ch )
     {
-        dsplDataScreen[row][column].pEntityVal = ch;
-        dsplDataScreen[row][column].blWasupdated = 0x01;
+      dsplDataScreen[row][column].pEntityVal = ch;
+      dsplDataScreen[row][column].blWasupdated = 0x01;
     }
+    else
+      dsplDataScreen[row][column].blWasupdated = 0x00;
 }
 
 /**

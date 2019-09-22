@@ -51,14 +51,7 @@ uint8_t blPressed;
 
 static void menuIntPrint(void)
 {
-  char pBuff[ 12 ];
-
-  dispSetLineCh( 1, ' ');
-  dispDrawStrN( 1, 0, curr->Name);
-
-  uiMaxVal = curr->maxVal;
-  uiMinVal = curr->minVal;
-
+  char pBuff[ 32 ]; // TODO change to the actual len 16-17 - because of warning
   uint32_t uiPrintedVal;
 
   switch (curr->subMenuType)
@@ -67,7 +60,6 @@ static void menuIntPrint(void)
       {
         uint8_t* pTmp = (uint8_t*)curr->pReturnVal;
         uiPrintedVal = *pTmp;
-//        sprintf(pBuff, "%d", uiPrintedVal );
         break;
       }
 
@@ -75,14 +67,12 @@ static void menuIntPrint(void)
       {
         uint16_t* pTmp = (uint16_t*)curr->pReturnVal;
         uiPrintedVal = *pTmp;
-//        sprintf(pBuff, "%d", uiPrintedVal );
         break;
       }
     case EnterUI32Val:
       {
         uint32_t* pTmp = (uint32_t*)curr->pReturnVal;
         uiPrintedVal = *pTmp;
-//        sprintf(pBuff, "%d", uiPrintedVal );
         break;
       }
     case EnterUIOnOff:
@@ -112,20 +102,18 @@ static void menuIntPrint(void)
       return;
   }
 
-
   if( curr->subMenuType != EnterUIOnOff )
-    sprintf(pBuff, "%d", uiPrintedVal );
-
-
-  uint8_t uIndex = strlen(curr->Name)+1;
-  uint8_t i = 0;
-
-  while( pBuff[ i ]!= 0x00 )
-    dispSetChar( 1, uIndex++, pBuff[i++]);
+  {
+    sprintf(pBuff, "%s %d", curr->Name, uiPrintedVal );
+    dispDrawStrN( 1, 0, pBuff);
+  }
 }
 
 static void increaseVal( void )
 {
+  uiMaxVal = curr->maxVal;
+  uiMinVal = curr->minVal;
+  
   switch (curr->subMenuType)
   {
     case EnterUI8Val:
@@ -165,6 +153,9 @@ static void increaseVal( void )
 
 static void decreaseVal( void )
 {
+  uiMaxVal = curr->maxVal;
+  uiMinVal = curr->minVal;
+  
   switch (curr->subMenuType)
   {
     case EnterUI8Val:
@@ -246,7 +237,7 @@ uint8_t menuEdIntEventHandler(_tEQ* p)
       {
         if( !blBackSelected )
         {
-            dispSetLineCh( 1, ' ');
+//            dispSetLineCh( 1, ' ');
             dispDrawStrN( 1, 0, "Back");
             blBackSelected = 0x01;
         }

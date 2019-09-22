@@ -28,7 +28,7 @@
  */
 #define DISPLAY_COLUMNS_NUMBER          16
 
-#define RTC_SYSTEM_TIME_UPDATE_GAP      15 		/*! Once per minute for default */
+#define RTC_SYSTEM_TIME_UPDATE_GAP      15 		/**< Period to update sytem time from RTC */
 
 /*! \var APP_SLEEP_MAX_SLEEPING_TIME_SEC
     \brief <A type definition for a .>

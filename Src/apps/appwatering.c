@@ -77,6 +77,7 @@
 #include "settings.h"
 #include "appfwk.h"
 #include "main.h"
+#include "fsmappl.h"
 #include "appwatering.h"
 
 
