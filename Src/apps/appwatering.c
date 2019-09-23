@@ -110,6 +110,7 @@ uint8_t   uiStateTO		      = 0;
 uint32_t  uiADCSum          = 0;
 uint8_t   blSuspended       = 1;
 
+uint8_t uiMappedADCSumPwrOn = 0;
 
 /* ------------------------------------------------------------------------------------------------
  *                                          Functions
@@ -132,6 +133,8 @@ static void setWtrAppState( uint8_t newState )
 {
   DBGT(LOG_DEBUG, "WTR:%d->%d", uiWtrAppState, newState );
 
+  char pBuff[ 17 ];
+  
 	switch (newState) {
 		case WTR_NONE:
 			uiWtrAppState 			= WTR_NONE;
@@ -139,10 +142,7 @@ static void setWtrAppState( uint8_t newState )
 			setFullBlock();
 			fwkLedBlink( 0, 2, 8 );
     
-      if( applContext.startConditions == ByReset )
-        blSuspended = 0x01;
-      else
-        blSuspended = 0x00;
+      addAppStateDisplayArea( "W N", 1 );
     
 			break;
 
@@ -150,14 +150,11 @@ static void setWtrAppState( uint8_t newState )
 			uiWtrAppState 		= WTR_IDLE;
 			uiWtrIdleSeconds 	= 1;
 			setFullBlock();
+
+      addAppStateDisplayArea( "W I", 1 );
+     
 			fwkLedBlink( 0, 2, 8 );
-    
-      if( applContext.startConditions == ByReset )
-        blSuspended = 0x01;
-      else
-        blSuspended = 0x00;
-      
-			break;
+  		break;
 
 		case WTR_PWRON:
 		  uiStateTO         = 1;
@@ -170,9 +167,11 @@ static void setWtrAppState( uint8_t newState )
       DBGT(LOG_DEBUG, "WTR:PWR:ON");
       setPwrControl( 0x01 );  /* switch ON pwr */
 
+      addAppStateDisplayArea( "W PwOn", 1 );
+    
       fwkLedBlink( 0, 2, 8 );
-
-		  setADCChanel( ACD_CHNL_START, 0x01 );
+    
+      setADCChanel( ACD_CHNL_START, 0x01 );
 		  startADCConversion();
 			break;
 
@@ -180,6 +179,9 @@ static void setWtrAppState( uint8_t newState )
       DBGT(LOG_DEBUG, "WTR:PMP:ON");
       setPumpControl( 0x01 ); /* switch ON pump */
 		  stopADCConversion();
+    
+      sprintf( pBuff, "W Wt %d", uiMappedADCSumPwrOn );
+      addAppStateDisplayArea( pBuff, 1 );
     
       setADCChanel( ACD_CHNL_START, 0x00 );
 		  setADCChanel( ACD_CHNL_STOP, 0x01 );
@@ -197,6 +199,8 @@ static void setWtrAppState( uint8_t newState )
       setFullBlock();
       uiStateTO = 1;
       uiWtrAppState = WTR_STOP;
+    
+      addAppStateDisplayArea( "W Stop", 1 );      
 
       DBGT( LOG_DEBUG, "Stop Indication" );
       fwkLedBlink( 0, 3, 3 );
@@ -206,6 +210,9 @@ static void setWtrAppState( uint8_t newState )
 		  setFullBlock();
       uiStateTO = 1;
       uiWtrAppState = WTR_STOP_ERR;
+    
+      sprintf( pBuff, "W Err" );
+    
       DBGT( LOG_DEBUG, "!!!ERROR Indication!!!" );
       fwkLedBlink( 0, 1, 1 );
 			break;
@@ -298,29 +305,11 @@ static uint8_t wtrPwrOnStateEh(_tEQ* p)
 
     DBGT( LOG_DEBUG, "WTR:ADC:%d:%d", ACD_CHNL_START, p->reserved );
 
-#if 0
     if( uiWtrAdcSmpNum >= WTR_ADC_WATERING_SAMPLES )
     {
-      uiADCSum = uiADCSum/WTR_ADC_WATERING_SAMPLES;
-      if( uiADCSum > WTR_WATERING_START_SHD)
-        setWtrAppState( WTR_WATERING ); // Have to Watering
-      else
-        setWtrAppState( WTR_STOP );  // Watering is not needed
-    }
-    else
-    {
-      uiWtrAdcSmpNum++;
-      
-      startADCConversion();  // Start new conversation
-    }
-#endif
+      uiMappedADCSumPwrOn =( uint8_t) mapDigitalValue( uiADCSum/WTR_ADC_WATERING_SAMPLES, 3500, 400, 10 );
 
-#if 1
-    if( uiWtrAdcSmpNum >= WTR_ADC_WATERING_SAMPLES )
-    {
-      uint8_t uiMappedADCSum =( uint8_t) mapDigitalValue( uiADCSum/WTR_ADC_WATERING_SAMPLES, 3500, 400, 10 );
-
-      if( uiMappedADCSum > getSettings()->uiStartSensorThreshold )
+      if( uiMappedADCSumPwrOn > getSettings()->uiStartSensorThreshold )
         setWtrAppState( WTR_WATERING ); // Have to Watering
       else
         setWtrAppState( WTR_STOP );  // Watering is not needed
@@ -331,8 +320,6 @@ static uint8_t wtrPwrOnStateEh(_tEQ* p)
 
       startADCConversion();  // Start new conversation
     }
-
-#endif
 
     return 0;
 
@@ -343,6 +330,8 @@ static uint8_t wtrPwrOnStateEh(_tEQ* p)
     return 0;
   }
 }
+
+uint8_t uiMappedADCSumWt  = 255;
 
 // WATERING
 static uint8_t wtrWateringStateEh(_tEQ* p)
@@ -367,35 +356,23 @@ static uint8_t wtrWateringStateEh(_tEQ* p)
   case EV_ADC_SCAN:
     
     DBGT( LOG_DEBUG, "WTR:ADC:%d:%d", ACD_CHNL_START, p->reserved ); 
-#if 0
-    if( uiStopWtSamples++ > WTR_ADC_STOP_WATERING_SAMPLES )
-    {
-        if( uiADCSum/WTR_ADC_STOP_WATERING_SAMPLES <  WTR_WATERING_STOP_SHD )
-          setWtrAppState( WTR_STOP );
-        else
-        {
-            uiStopWtSamples = 1;
-            uiADCSum = 0;
 
-            startADCConversion();  // Start new conversation       
-        }
-    }
-    else
-    {
-      uiADCSum += p->reserved;
-      
-      startADCConversion();  // Start new conversation
-    }
-    return 0;
-#endif
-
-#if 1
     if( uiStopWtSamples++ > WTR_ADC_STOP_WATERING_SAMPLES )
     {
         uint8_t uiMappedADCSum =( uint8_t) mapDigitalValue( uiADCSum/WTR_ADC_STOP_WATERING_SAMPLES, 3500, 400, 10 );
-
+        
+        if( uiMappedADCSum != uiMappedADCSumWt )
+        {
+          char pBuff[ 17 ];
+          uiMappedADCSumWt = uiMappedADCSum;
+          sprintf( pBuff, "W Wt %d %d", uiMappedADCSumPwrOn, uiMappedADCSumWt );
+          addAppStateDisplayArea( pBuff, 1 );          
+        }
+      
         if( uiMappedADCSum < getSettings()->uiStopSensorThreshold )
+        {
           setWtrAppState( WTR_STOP );
+        }
         else
         {
             uiStopWtSamples = 1;
@@ -411,7 +388,6 @@ static uint8_t wtrWateringStateEh(_tEQ* p)
       startADCConversion();  // Start new conversation
     }
     return 0;
-#endif
 
   case EV_PARK_ACT:
   case EV_DROP_ACT:

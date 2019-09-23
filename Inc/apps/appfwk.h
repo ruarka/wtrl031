@@ -158,7 +158,7 @@ extern void dispRedraw(void);
 extern void dispClear(void);
 extern void dispSetChar(uint8_t row, uint8_t column, char ch);
 extern void dispSetLineCh(uint8_t row, char ch);
-extern void dispDrawStr(uint8_t row, uint8_t col, const char* const pcStr);
+// extern void dispDrawStr(uint8_t row, uint8_t col, const char* const pcStr);
 extern void dispDrawStrN(uint8_t row, uint8_t col, const char* const pcStr);
 // extern uint8_t dispCheckStr(uint8_t row, const char* const pcStr);
 extern char* dispGetString(uint8_t row, char* pBuff);

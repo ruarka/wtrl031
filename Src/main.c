@@ -674,7 +674,7 @@ void hwSleepingInitiate(void)
     DBGT( LOG_DEBUG, "MN:SLEEP");
     
     const char pMsg[] = "Sleep           ";
-    dispDrawStr( 1, 0, pMsg);
+    dispDrawStrN( 1, 0, pMsg);
     dispRedraw();
     
 		/* Enter the Standby mode */
