@@ -45,86 +45,9 @@
  *                                          Functions
  * ------------------------------------------------------------------------------------------------
  */
-#if 0
-void printMessageToBoard( void )
-{
-	uint8_t year, date, month, weekDay;
-	
-	/* clear display */
-	// dispClear();
+char AppStateAreaStr[ 17 ];
+uint8_t uiAppAreaDisplayTime;
 
-	/* Print Time, Minutes to watering, Charge Lvl to disp */
-	printTimeToDspl();
-
-	getDateFromRTC( &year, &month, &date, &weekDay);
-	
-	/* print weekday to board */
-	const char* const pcStr =  weekDayStrs[ weekDay ];
-	dispDrawStr( DSPL_WATERING_MINUTES_ROW, DSPL_WATERING_MINUTES_COL, pcStr);
-	
-	dispSetChar(DSPL_CHARGE_LVL_ROW, DSLP_CHARGE_LVL_COL, pIntToHex[5]);
-	dispRedraw();
-}	
-
-void menuWatchChangeStateBefore(tFsmMenuState newState)
-{
-  DBGT( LOG_DEBUG, "FSM:Watch:Before" );
-  
-  /* clear display */
-  dispClear();
-//  dispRedraw();
-
-	printMessageToBoard();
-}
-
-void menuWatchChangeStateAfter(tFsmMenuState newState)
-{
-  DBGT( LOG_DEBUG, "FSM:Watch:After" );
-}
-
-uint8_t menuWatchEventHandler(_tEQ* p)
-{
-  DBGT( LOG_DEBUG, "FSM:Watch:EH-%d:%d", p->eId, p->reserved );
-
-    switch (p->eId)
-    {
-    case EV_APP_INIT:
-        applMenuChangeState(watch);
-        break;
-
-    case EV_APP_SEC_TICK:
-        /* Print Time, Minutes to watering, Charge Lvl to disp */
-				printMessageToBoard();
-        break;
-
-    case EV_APP_UP:
-    case EV_APP_DOWN:
-    case EV_APP_LEFT:
-    case EV_APP_RIGHT:
-    case EV_APP_BTN_LEFT:
-        applMenuChangeState(menu_settings0);
-        break;
-
-    case EV_APP_IDLE:
-				break;
-		
-    case EV_APP_SLEEP:
-				break;
-
-    default:
-        applMenuChangeState( none );
-        break;
-    }
-
-    return 0x00;
-}
-#endif
-
-// ---------------------------------------------------------------------
-// New
-// ---------------------------------------------------------------------
-
-#if 1
 void printMessageToBoard( void )
 {
   uint8_t year, date, month, weekDay;
@@ -140,6 +63,14 @@ void printMessageToBoard( void )
 
   dispDrawStrN( DSPL_WATERING_MINUTES_ROW, 0, pDisplayStrBuff );
 
+  // Add application draw string part
+  if( !uiAppAreaDisplayTime )
+  {
+    getAppStateDisplayArea( AppStateAreaStr, &uiAppAreaDisplayTime );
+    if( AppStateAreaStr[0]!= 0x00 )
+      dispDrawStrN( DSPL_WATERING_APP_STATE_AREA_ROW, 0, AppStateAreaStr );
+  }
+
   dispRedraw();
 }
 
@@ -150,6 +81,8 @@ void menuWatchChangeStateBefore(tFsmMenuState newState)
   /* clear display */
   dispClear();
 
+  dispRedraw();
+  
   printMessageToBoard();
 }
 
@@ -169,6 +102,10 @@ uint8_t menuWatchEventHandler(_tEQ* p)
         break;
 
     case EV_APP_SEC_TICK:
+        /* Appl State Display part */
+        if( uiAppAreaDisplayTime )
+          uiAppAreaDisplayTime--;
+
         /* Print Time, Minutes to watering, Charge Lvl to disp */
         printMessageToBoard();
         break;
@@ -199,8 +136,6 @@ uint8_t menuWatchEventHandler(_tEQ* p)
 
     return 0x00;
 }
-
-#endif
 
 /* ------------------------------------------------------------------------------------------------
  *                                 Global Variables

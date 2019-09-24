@@ -80,6 +80,10 @@ extern void getDateFromRTC(uint8_t* Year,  uint8_t* Month, uint8_t* Date, uint8_
 extern void setDateForRTC(uint8_t year, uint8_t date, uint8_t month, uint8_t weekday);
 extern void setTimeToRTC( uint8_t hours, uint8_t minutes, uint8_t seconds );
 
+#ifdef __cplusplus
+}
+#endif
+
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
@@ -101,8 +105,6 @@ extern void setTimeToRTC( uint8_t hours, uint8_t minutes, uint8_t seconds );
 #define GPIO_LCD_CONTROL_GPIO_Port    GPIOB
 
 /* USER CODE BEGIN Private defines */
-//#define RTC_SYSTEM_TIME_UPDATE_GAP      600 /*! Once per minute for default */
-
 
 /* Application constants */
 /*! \def TIME_TO_SLEEP_DEF_VAL
@@ -110,32 +112,16 @@ extern void setTimeToRTC( uint8_t hours, uint8_t minutes, uint8_t seconds );
 */ 
 #define TIME_TO_SLEEP_DEF_VAL						60
 
-/*! \def WATERING_SECONDS_DEF_VAL
-    \brief How many seconds watering goes
-*/
-#define WATERING_SECONDS_DEF_VAL				20  	
-
 /*! \def PUMP_IS_ON_DEF_VAL
     \brief Def settings will ON for a PUMP
 */
 #define PUMP_IS_ON_DEF_VAL							0x01
 
-/*! \def WAKEUP_ACTIVITY_TOUT
-    \brief Seconds after Alarm wakeup proc starts sleeping procedure
-*/
-//#define WAKEUP_ACTIVITY_TOUT						180		 		/*! Seconds after Alarm wakeup proc starts sleeping procedure */
-#define WAKEUP_ACTIVITY_TOUT						5		 		/*! Seconds after Alarm wakeup proc starts sleeping procedure */
-
-
-#define RTC_BKP_TIME_DATE_SET_FLAG    0x32F2
-#define RTC_BKP_TIME_SET_FLAG         0xAAF2
-#define RTC_BKP_DATE_SET_FLAG         0xF2AA
+#define RTC_BKP_TIME_DATE_SET_FLAG      0x32F2
+#define RTC_BKP_TIME_SET_FLAG           0xAAF2
+#define RTC_BKP_DATE_SET_FLAG           0xF2AA
 
 /* USER CODE END Private defines */
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* __MAIN_H */
 

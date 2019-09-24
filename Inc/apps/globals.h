@@ -37,29 +37,8 @@ enum {
 
 #define BAR(fmt, ...)  printf(fmt, ##__VA_ARGS__)
 
-/*
-#define LOG(entity_level, level, format, ...) \
-	do { \
-			if( entity_level >= level ) \
-			{ \
-					printf( format, __VA_ARGS__ ); \
-			} \
-	} while(0)
-
-*/
-
-// #ifdef TIME_FUNC
-// #define LOGTIME() printf( "\n%d %02d:%02d:%02d ",  sDateStructureGet.WeekDay, sTimeStructureGet.Hours, sTimeStructureGet.Minutes, sTimeStructureGet.Seconds )
-
-// uint8_t 	hours;
-// uint8_t 	minutes;
-// uint8_t 	seconds;
-
-#if 1
 #define LOGTIME() printf( "\r\n%d %02d:%02d:%02d ",  0, fwkSystemTime.hours, fwkSystemTime.minutes, fwkSystemTime.seconds )
-#else
-#define LOGTIME() printf( "\r\n0 00:00:00 " )
-#endif
+
 
 #define LOG(entity_level, level, format, ...) \
 	do { \
@@ -68,7 +47,6 @@ enum {
 					printf( format, ##__VA_ARGS__  ); \
 			} \
 	} while(0)
-
 
 #define LOGT(entity_level, level, format, ...) \
 		LOGTIME();  \
