@@ -354,7 +354,7 @@ void fwkAppInit(void)
     
     const char pMsg[] = "Initialization";
     
-    dispDrawStr( 1, 0, pMsg);
+    dispDrawStrN( 1, 0, pMsg);
     
     dispRedraw();
     
@@ -569,9 +569,11 @@ void dispSetChar(uint8_t row, uint8_t column, char ch)
     char chTmp = dsplDataScreen[row][column].pEntityVal;
     if( chTmp != ch )
     {
-        dsplDataScreen[row][column].pEntityVal = ch;
-        dsplDataScreen[row][column].blWasupdated = 0x01;
+      dsplDataScreen[row][column].pEntityVal = ch;
+      dsplDataScreen[row][column].blWasupdated = 0x01;
     }
+    else
+      dsplDataScreen[row][column].blWasupdated = 0x00;
 }
 
 /**
@@ -589,22 +591,22 @@ void dispSetLineCh(uint8_t row, char ch)
  * \fn     void dispDrawStr(uint8_t row, uint8_t col, const char* const pcStr)
  * \brief  print string from eeprom to display for row and from column
  */
-void dispDrawStr(uint8_t row, uint8_t col, const char* const pcStr)
-{
-	uint8_t i = 0;
-	uint8_t column = col;
+//void dispDrawStr(uint8_t row, uint8_t col, const char* const pcStr)
+//{
+//	uint8_t i = 0;
+//	uint8_t column = col;
 
-	
-	while( pcStr[ i ]!= 0x00 ) 
-	{
-			dispSetChar(row, column, pcStr[i]);
-			i++;
-			column++;
-	}
+//	
+//	while( pcStr[ i ]!= 0x00 ) 
+//	{
+//			dispSetChar(row, column, pcStr[i]);
+//			i++;
+//			column++;
+//	}
 
-	while( column < DISPLAY_COLUMNS_NUMBER)
-			dispSetChar(row, column++, ' ');
-}
+//	while( column < DISPLAY_COLUMNS_NUMBER)
+//			dispSetChar(row, column++, ' ');
+//}
 
 void dispDrawStrN(uint8_t row, uint8_t col, const char* const pcStr)
 {

@@ -21,6 +21,23 @@ Description:    Final State Machine(FSM) application facade interface decleratio
 */
 
 /* ------------------------------------------------------------------------------------------------
+ *                                        Standard Defines
+ * ------------------------------------------------------------------------------------------------
+ */
+#define INACTIVITY_TIME_DETECTION         20
+
+#define DSPL_WATERING_MINUTES_ROW         1
+#define DSPL_WATERING_MINUTES_COL         9
+
+#define DSPL_WATERING_APP_STATE_AREA_ROW  2
+
+#define DSPL_CHARGE_LVL_ROW               1
+#define DSLP_CHARGE_LVL_COL               14
+
+#define APP_STATE_DISPLAY_STRING_LEN      17
+#define APP_STATE_AREA_DISPLAY_STR_NUM    10
+
+/* ------------------------------------------------------------------------------------------------
  *                                               Types
  * ------------------------------------------------------------------------------------------------
  */
@@ -97,27 +114,32 @@ typedef const struct _fsm_menu_interface
 } tFsmMenuIfs;
 
 
+/*
+ * Application State Display Area interface
+ */
+typedef struct _app_state_display_area_entity
+{
+  char      appMsg[ APP_STATE_DISPLAY_STRING_LEN ];
+  uint8_t   uiTimeToDisplay;
+} tAppStateDisplayAreaEntity;
+
+typedef struct _app_state_display_area_buf
+{
+  tAppStateDisplayAreaEntity strings[ APP_STATE_AREA_DISPLAY_STR_NUM ];
+  uint8_t wrPtr;
+  uint8_t rdPtr;
+} tAppStateDisplayAreaBuf;
 
 
 /* ------------------------------------------------------------------------------------------------
-*                                        Memory Attributes
-* ------------------------------------------------------------------------------------------------
-*/
+ *                                        Memory Attributes
+ * ------------------------------------------------------------------------------------------------
+ */
 
 /* ------------------------------------------------------------------------------------------------
-*                                        Standard Defines
-* ------------------------------------------------------------------------------------------------
-*/
-
-#define INACTIVITY_TIME_DETECTION       20
-
-#define DSPL_WATERING_MINUTES_ROW       1
-#define DSPL_WATERING_MINUTES_COL       9
-
-#define DSPL_CHARGE_LVL_ROW             1
-#define DSLP_CHARGE_LVL_COL             14
-
-
+ *                                        Externals Defines
+ * ------------------------------------------------------------------------------------------------
+ */
 extern const char pIntToHex[];
 
 extern uint8_t  blMenuActive;
@@ -130,3 +152,15 @@ extern void appPumpOnOff(uint8_t PumpState);
 
 extern const tFsmMenuSelect sMenuSettingS0;
 
+extern char* pAppStateDisplayString;
+
+/*
+ * Application State Display Area interface
+ */
+extern tAppStateDisplayAreaBuf appStateDislayArea;
+
+extern void initAppStateDisplayArea(void);
+
+extern void addAppStateDisplayArea( char* pMsgStr, uint8_t timeToDisplay );
+
+extern void getAppStateDisplayArea( char* pReadBuf, uint8_t* pTomeToDisplay );

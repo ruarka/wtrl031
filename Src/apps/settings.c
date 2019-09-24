@@ -94,7 +94,6 @@ void loadSettings( void )
 
 void assing_default_settings( void )
 {
-//	uint8_t i;
 	settings.secondsToSleep     = TIME_TO_SLEEP_DEF_VAL;
   settings.blUsePump          = PUMP_IS_ON_DEF_VAL;
   settings.minutesWateringGap = 55;
@@ -105,8 +104,6 @@ void assing_default_settings( void )
 //  settings.uiStopSensorThreshold  = (uint8_t) mapDigitalValue( WTR_WATERING_STOP_SHD, 0x0fff, 0x0000, 10 );
   settings.uiStartSensorThreshold = (uint8_t) mapDigitalValue( WTR_WATERING_START_SHD, 3500, 400, 10 );
   settings.uiStopSensorThreshold  = (uint8_t) mapDigitalValue( WTR_WATERING_STOP_SHD, 3500, 400, 10 );
-
-  //  settings.timerMode          = ConditionalTimer;
 
   settings.crc = calculateCrcEx(( uint8_t* )&settings, sizeof( settings )-sizeof( settings.crc ));
 }

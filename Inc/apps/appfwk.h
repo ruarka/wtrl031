@@ -28,7 +28,7 @@
  */
 #define DISPLAY_COLUMNS_NUMBER          16
 
-#define RTC_SYSTEM_TIME_UPDATE_GAP      15 		/*! Once per minute for default */
+#define RTC_SYSTEM_TIME_UPDATE_GAP      15 		/**< Period to update sytem time from RTC */
 
 /*! \var APP_SLEEP_MAX_SLEEPING_TIME_SEC
     \brief <A type definition for a .>
@@ -158,7 +158,7 @@ extern void dispRedraw(void);
 extern void dispClear(void);
 extern void dispSetChar(uint8_t row, uint8_t column, char ch);
 extern void dispSetLineCh(uint8_t row, char ch);
-extern void dispDrawStr(uint8_t row, uint8_t col, const char* const pcStr);
+// extern void dispDrawStr(uint8_t row, uint8_t col, const char* const pcStr);
 extern void dispDrawStrN(uint8_t row, uint8_t col, const char* const pcStr);
 // extern uint8_t dispCheckStr(uint8_t row, const char* const pcStr);
 extern char* dispGetString(uint8_t row, char* pBuff);
